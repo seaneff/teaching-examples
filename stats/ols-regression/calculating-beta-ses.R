@@ -60,10 +60,16 @@ coef(summary(model_1))[,"Std. Error"]["sqrft"]
 beta_estimate <- NA
 
 for(i in 1:1000){
-  model_boot <- lm(price ~ sqrft,
-                   data = slice_sample(hprice1, 
-                                       n = nrow(hprice1),
-                                       replace = TRUE))
+  ## step 1: take a random sample (with replacement) from our data
+  ## this happens in the slice_sample function
+  bootstrap_sample <- slice_sample(hprice1,  n = nrow(hprice1), replace = TRUE)
+  
+  ## step 2: run a linear model (or calculate whatever statistic you care about)
+  ## extract the info and save it
+  model_boot <- lm(price ~ sqrft, data = bootstrap_sample)
+  
+  ## step 3: extract the info you care about and make sure you save it
+  ## somewhere you can access later
   beta_estimate[i] <- coef(model_boot)["sqrft"]
 }
 
